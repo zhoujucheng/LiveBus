@@ -8,11 +8,15 @@ Event bus for Android, base on LiveData
 
 #### Normal event
 ```
-  LiveBus.get(Event.class).observe(this, event -> {
-    //TODO
-  });
+LiveBus.get(Event.class).observe(this, event -> {
+  //TODO
+});
+//or
+LiveBus.get(Event.class).observeForever(event -> {
+  //TODO
+});
   
-  LiveBus.sendEvent(new Event());
+LiveBus.sendEvent(new Event());
 ```
 
 #### Sticky event
@@ -21,6 +25,10 @@ LiveBus.sendStickyEvent(new Event());
 LiveBus.sendEvent(new Event); //this event will be receive after observeSticky()
 
 LiveBus.get(Event.class).observeSticky(this,event -> {
+    //TODO
+})
+//or
+LiveBus.get(Event.class).observeForeverSticky(event -> {
     //TODO
 });
 
