@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             LiveBus.get(TestEvent2.class).removeObservers(MainActivity.this);
         });
 
-        LiveBus.sendEvent(TestEvent2.class);
+        LiveBus.sendEvent(new TestEvent2());
 
         // test remove sticky event
         LiveBus.removeStickyEvent(TestEvent2.class);
