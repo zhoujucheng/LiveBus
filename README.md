@@ -22,7 +22,7 @@ LiveBus.sendEvent(new Event());
 #### Sticky event
 ```
 LiveBus.sendStickyEvent(new Event());
-LiveBus.sendEvent(new Event); //this event will be receive after observeSticky()
+LiveBus.sendEvent(new Event()); //this event will be receive after observeSticky()
 
 LiveBus.get(Event.class).observeSticky(this,event -> {
     //TODO
@@ -35,3 +35,7 @@ LiveBus.get(Event.class).observeForeverSticky(event -> {
 //if you don't need sticky event any more, remove it
 LiveBus.removeStickyEvent(Event.class);
 ```
+
+<br>
+
+关于本项目的博客地址: https://blog.csdn.net/dnntjc/article/details/86039006
