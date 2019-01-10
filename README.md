@@ -21,8 +21,8 @@ LiveBus.sendEvent(new Event());
 
 #### Sticky event
 ```
-LiveBus.sendStickyEvent(new Event());
-LiveBus.sendEvent(new Event); //this event will be receive after observeSticky()
+LiveBus.setEventSticky(Event.class);
+LiveBus.sendEvent(new Event());
 
 LiveBus.get(Event.class).observeSticky(this,event -> {
     //TODO

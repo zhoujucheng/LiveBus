@@ -21,9 +21,9 @@ public class LiveBus {
 
     @MainThread
     @SuppressWarnings({"unchecked"})
-    public static <T> BusLiveData<T> get(Class<T> tClass){
+    public static <T> BusLiveData<T> get(Class<T> eventClass){
         checkMainThread("get");
-        String tClassName = tClass.getName();
+        String tClassName = eventClass.getName();
         BusLiveData<T> liveData = (BusLiveData<T>) Holder.BUS.get(tClassName);
         if (liveData == null){
             liveData = new BusLiveData<>();
@@ -43,24 +43,23 @@ public class LiveBus {
     }
 
     @MainThread
+    public static <T> void setEventSticky(Class<T> eventClass){
+        checkMainThread("setEventSticky");
+        BusLiveData<T> liveData = get(eventClass);
+        liveData.isSticky = true;
+    }
+
+
+    @MainThread
     @SuppressWarnings("unchecked")
-    public static <T> void sendStickyEvent(T event){
-        checkMainThread("sendStickyEvent");
-        BusLiveData<T> liveData = get((Class<T>) event.getClass());
-        if (!liveData.isSticky){
-            liveData.isSticky = true;
-        }
+    public static void setAndSendSticky(Object event){
+        checkMainThread("setAndSendSticky");
+        BusLiveData<Object> liveData = get((Class<Object>) event.getClass());
+        liveData.isSticky = true;
         liveData.setValue(event);
     }
 
-    public static void postEvent(Object event){
-        BusLiveData<Object> liveData = Holder.BUS.get(event.getClass().getName());
-        if (liveData != null){
-            liveData.postValue(event);
-        }
-    }
-
-    public static void postStickyEvent(Object event){
+    public static void postSetAndSendSticky(Object event){
         if (mHandler == null){
             synchronized (LiveBus.class){
                 if (mHandler == null){
@@ -73,14 +72,14 @@ public class LiveBus {
     }
 
     @MainThread
-    public static <T> void removeStickyEvent(Class<T> tClass){
+    public static <T> void removeStickyEvent(Class<T> eventClass){
         checkMainThread("removeStickEvent");
-        BusLiveData<Object> liveData = Holder.BUS.get(tClass.getName());
+        BusLiveData<Object> liveData = Holder.BUS.get(eventClass.getName());
         if (liveData != null){
             if (liveData.hasObservers()){
                 liveData.isSticky = false;
             }else {
-                Holder.BUS.remove(tClass.getName());
+                Holder.BUS.remove(eventClass.getName());
             }
         }
     }
@@ -106,7 +105,7 @@ public class LiveBus {
 
         @Override
         public void run() {
-            LiveBus.sendStickyEvent(mEvent);
+            LiveBus.setAndSendSticky(mEvent);
         }
     }
 
@@ -160,6 +159,10 @@ public class LiveBus {
         @SuppressLint("PrivateApi")
         @SuppressWarnings({"unchecked"})
         private void modifyObserverWrapperVersion(int liveDataVersion){
+
+            if (liveDataVersion == -1){
+                return;
+            }
 
             try {
                 Field observersField = LiveData.class.getDeclaredField("mObservers");

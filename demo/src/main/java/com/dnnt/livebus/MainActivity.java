@@ -2,6 +2,7 @@ package com.dnnt.livebus;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.dnnt.livebus.test.event.TestEvent1;
 import com.dnnt.livebus.test.event.TestEvent2;
@@ -14,11 +15,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         test1();
+        testPost();
     }
 
     private void test1(){
         LiveBus.sendEvent(new TestEvent1());
-        LiveBus.sendStickyEvent(new TestEvent2());
+        LiveBus.setAndSendSticky(new TestEvent2());
 
 
         LiveBus.get(TestEvent1.class).observe(this, event -> {
@@ -48,6 +50,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         LiveBus.get(TestEvent2.class).removeObservers(this);
+    }
+
+    public void testPost(){
+        new Thread(() -> {
+            LiveBus.postSetAndSendSticky(new TestEvent2());
+        }).start();
+
+        findViewById(R.id.main_root).postDelayed(() -> {
+            LiveBus.get(TestEvent2.class).observeSticky(this, event -> {
+                TextView tv = findViewById(R.id.main_text);
+                tv.setText("Test pass");
+                LiveBus.get(TestEvent2.class).removeObservers(this);
+            });
+        }, 3000);
+
+
     }
 
 }
