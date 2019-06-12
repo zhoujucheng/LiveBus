@@ -41,4 +41,4 @@ LiveBus.removeStickyEvent(Event.class);
 关于本项目的博客地址: https://blog.csdn.net/dnntjc/article/details/86039006
 
 # License
-[Apache License 2.0](https://github.com/dtjc/LiveBus/blob/master/LICENSE)
+[Apache License 2.0](https://github.com/zhoujucheng/LiveBus/blob/master/LICENSE)
